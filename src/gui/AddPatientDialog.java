@@ -16,18 +16,18 @@ public class AddPatientDialog extends JDialog {
     private JTextField vornameField;
     private JTextField nachnameField;
     private JTextField geburtsdatumField;
-    private JTextField siteidField;
+    private JTextField stationField;
 
     public AddPatientDialog(JFrame parentFrame, DefaultTableModel model) {
         super(parentFrame, "Neuen Patienten hinzufügen", true);
-        setSize(300, 400);
+        setSize(400, 400);
         setLayout(new GridLayout(6, 2));
 
         svnField = new JTextField();
         vornameField = new JTextField();
         nachnameField = new JTextField();
         geburtsdatumField = new JTextField(); // Format: YYYY-MM-DD
-        siteidField = new JTextField();
+        stationField = new JTextField();
 
         add(new JLabel("SVN:"));
         add(svnField);
@@ -37,8 +37,8 @@ public class AddPatientDialog extends JDialog {
         add(nachnameField);
         add(new JLabel("Geburtsdatum (YYYY-MM-DD):"));
         add(geburtsdatumField);
-        add(new JLabel("SiteID:"));
-        add(siteidField);
+        add(new JLabel("Station:"));
+        add(stationField);
 
         JButton saveButton = new JButton("Speichern");
         JButton cancelButton = new JButton("Abbrechen");
@@ -52,15 +52,24 @@ public class AddPatientDialog extends JDialog {
                 if (validateInput()) {
                     try {
                         int svn = Integer.parseInt(svnField.getText());
+                        if (PatientDatabase.isSVNExists(svn)) {
+                            JOptionPane.showMessageDialog(AddPatientDialog.this,
+                                    "Ein Patient mit dieser SVN existiert bereits.",
+                                    "Fehler",
+                                    JOptionPane.ERROR_MESSAGE);
+                            return; // Abbrechen, wenn SVN bereits vorhanden ist
+                        }
+
                         String vorname = vornameField.getText();
                         String nachname = nachnameField.getText();
                         LocalDate geburtsdatum = LocalDate.parse(geburtsdatumField.getText());
-                        int siteid = Integer.parseInt(siteidField.getText());
+                        int station = Integer.parseInt(stationField.getText());
 
-                        Patient newPatient = new Patient(svn, vorname, nachname, geburtsdatum, siteid);
+                        Patient newPatient = new Patient(svn, vorname, nachname, geburtsdatum, station);
+
                         PatientDatabase.addPatient(newPatient); // Datenbank aktualisieren
 
-                        model.addRow(new Object[]{svn, vorname, nachname, geburtsdatum, siteid});
+                        model.addRow(new Object[]{svn, vorname, nachname, geburtsdatum, station});
                         dispose();
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(AddPatientDialog.this, "Fehler beim Hinzufügen des Patienten. Bitte überprüfen Sie die Eingaben.", "Fehler", JOptionPane.ERROR_MESSAGE);
@@ -79,16 +88,16 @@ public class AddPatientDialog extends JDialog {
 
     private boolean validateInput() {
         String svn = svnField.getText().trim();
-        String siteidText = siteidField.getText().trim();
+        String stationText = stationField.getText().trim();
 
         boolean isSVNValid = svn.length() == 4 && svn.matches("\\d+");
-        boolean isSiteIDValid;
+        boolean isStationValid;
 
         try {
-            int siteid = Integer.parseInt(siteidText);
-            isSiteIDValid = siteid >= 1 && siteid <= 4;
+            int station = Integer.parseInt(stationText);
+            isStationValid = station >= 1 && station <= 4;
         } catch (NumberFormatException e) {
-            isSiteIDValid = false;
+            isStationValid = false;
         }
 
         if (!isSVNValid) {
@@ -96,8 +105,8 @@ public class AddPatientDialog extends JDialog {
             return false;
         }
 
-        if (!isSiteIDValid) {
-            JOptionPane.showMessageDialog(this, "Die SiteID muss zwischen 1 und 4 sein :(.", "Ungültige Eingabe", JOptionPane.ERROR_MESSAGE);
+        if (!isStationValid) {
+            JOptionPane.showMessageDialog(this, "Die Station muss zwischen 1 und 4 sein :(.", "Ungültige Eingabe", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 

@@ -13,7 +13,7 @@ public class PatientFetcher {
 
     public static List<Patient> fetchPatients() {
         List<Patient> patients = new ArrayList<>();
-        String query = "SELECT SVN, vorname, nachname, gebdatum, siteid FROM Patient";
+        String query = "SELECT SVN, vorname, nachname, gebdatum, station FROM Patient";
 
         try (Connection connection = DBAccess.connect();
              Statement stmt = connection.createStatement();
@@ -24,9 +24,9 @@ public class PatientFetcher {
                 String vorname = rs.getString("vorname");
                 String nachname = rs.getString("nachname");
                 LocalDate gebdatum = rs.getDate("gebdatum").toLocalDate();
-                int siteid = rs.getInt("siteid");
+                int station = rs.getInt("station");
 
-                patients.add(new Patient(SVN, vorname, nachname, gebdatum, siteid));
+                patients.add(new Patient(SVN, vorname, nachname, gebdatum, station));
             }
         } catch (Exception e) {
             e.printStackTrace();

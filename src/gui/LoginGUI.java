@@ -2,7 +2,7 @@ package gui;
 
 import database.PatientFetcher;
 import model.Patient;
-
+import gui.EditPatientDialog;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -18,13 +18,14 @@ public class LoginGUI {
     public static void main(String[] args) {
         // GUI im Event-Dispatch-Thread starten
         SwingUtilities.invokeLater(() -> new LoginGUI().createLoginForm());
+
     }
 
     public void createLoginForm() {
         // Erstellen des JFrame (Hauptfenster)
         JFrame frame = new JFrame("Login");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 250);
+        frame.setSize(400, 200);
         frame.setLocationRelativeTo(null);  // Fenster wird in der Mitte des Bildschirms angezeigt
 
         // Erstellen eines Panels, um das Layout zu gestalten
@@ -50,10 +51,12 @@ public class LoginGUI {
                 char[] password = passwordField.getPassword();
 
                 // Einfacher Login-Check (nur ein Beispiel)
-                if (username.equals("admin") && String.valueOf(password).equals("1234")) {
+                if (username.equals("a") && String.valueOf(password).equals("a")) {
                     // Erfolgsanzeige im eigenen Panel mit Bild
                     JPanel successPanel = new JPanel();
                     successPanel.setLayout(new BorderLayout());
+
+
 
                     // Laden des Bildes
                     ImageIcon erfolgreicheAnmeldung = new ImageIcon("/Users/haas.manuel/Desktop/Gesundheits Informatik/Software/Erfolgreiche_Anmeldung.png"); // Bild einfügen

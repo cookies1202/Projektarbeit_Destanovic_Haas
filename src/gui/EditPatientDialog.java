@@ -6,8 +6,6 @@ import model.Patient;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.LocalDate;
 
 public class EditPatientDialog extends JDialog {
@@ -16,26 +14,31 @@ public class EditPatientDialog extends JDialog {
     private JTextField vornameField;
     private JTextField nachnameField;
     private JTextField geburtsdatumField;
-    private JTextField siteidField;
+    private JTextField stationField;
 
-    private Patient originalPatient;
     private DefaultTableModel model;
     private int rowIndex;
 
     public EditPatientDialog(JFrame parentFrame, Patient patient, DefaultTableModel model, int rowIndex) {
         super(parentFrame, "Patientendaten bearbeiten", true);
-        this.originalPatient = patient;
         this.model = model;
         this.rowIndex = rowIndex;
+        System.out.println("Das ist Edit");
 
+        createAndShowGUI(patient);
+        setLocationRelativeTo(parentFrame);
+        setVisible(true);
+    }
+
+    private void createAndShowGUI(Patient patient) {
         setSize(300, 400);
         setLayout(new GridLayout(6, 2));
 
         svnField = new JTextField(String.valueOf(patient.getSVN()));
         vornameField = new JTextField(patient.getVorname());
         nachnameField = new JTextField(patient.getNachname());
-        geburtsdatumField = new JTextField(patient.getGebdatum().toString()); // Format: YYYY-MM-DD
-        siteidField = new JTextField(String.valueOf(patient.getSiteid()));
+        geburtsdatumField = new JTextField(patient.getGebdatum().toString());
+        stationField = new JTextField(String.valueOf(patient.getStation()));
 
         add(new JLabel("SVN:"));
         add(svnField);
@@ -45,8 +48,8 @@ public class EditPatientDialog extends JDialog {
         add(nachnameField);
         add(new JLabel("Geburtsdatum (YYYY-MM-DD):"));
         add(geburtsdatumField);
-        add(new JLabel("SiteID:"));
-        add(siteidField);
+        add(new JLabel("Station:"));
+        add(stationField);
 
         JButton saveButton = new JButton("Speichern");
         JButton cancelButton = new JButton("Abbrechen");
@@ -54,51 +57,30 @@ public class EditPatientDialog extends JDialog {
         add(saveButton);
         add(cancelButton);
 
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    int svn = Integer.parseInt(svnField.getText());
-                    String vorname = vornameField.getText();
-                    String nachname = nachnameField.getText();
-                    LocalDate geburtsdatum = LocalDate.parse(geburtsdatumField.getText());
-                    int siteid = Integer.parseInt(siteidField.getText());
+        saveButton.addActionListener(e -> handleSave());
+        cancelButton.addActionListener(e -> dispose());
+    }
 
-                    // Validierung der SiteID
-                    if (siteid < 1 || siteid > 4) {
-                        throw new IllegalArgumentException("SiteID muss zwischen 1 und 4 sein.");
-                    }
+    private void handleSave() {
+        try {
+            int svn = Integer.parseInt(svnField.getText());
+            String vorname = vornameField.getText();
+            String nachname = nachnameField.getText();
+            LocalDate geburtsdatum = LocalDate.parse(geburtsdatumField.getText());
+            int station = Integer.parseInt(stationField.getText());
 
-                    // Erstellen des neuen Patientenobjekts
-                    Patient updatedPatient = new Patient(svn, vorname, nachname, geburtsdatum, siteid);
+            Patient updatedPatient = new Patient(svn, vorname, nachname, geburtsdatum, station);
+            PatientDatabase.updatePatient(updatedPatient);
 
-                    // Aktualisieren der Patientendaten in der Datenbank
-                    PatientDatabase.updatePatient(updatedPatient);
+            model.setValueAt(svn, rowIndex, 0);
+            model.setValueAt(vorname, rowIndex, 1);
+            model.setValueAt(nachname, rowIndex, 2);
+            model.setValueAt(geburtsdatum, rowIndex, 3);
+            model.setValueAt(station, rowIndex, 4);
 
-                    // Aktualisieren der Tabelle mit den neuen Daten
-                    model.setValueAt(svn, rowIndex, 0);
-                    model.setValueAt(vorname, rowIndex, 1);
-                    model.setValueAt(nachname, rowIndex, 2);
-                    model.setValueAt(geburtsdatum, rowIndex, 3);
-                    model.setValueAt(siteid, rowIndex, 4);
-
-                    // Dialog schließen
-                    dispose();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(EditPatientDialog.this, "Fehler beim Aktualisieren des Patienten. Bitte überprüfen Sie die Eingaben.", "Fehler", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose(); // Schließt den Dialog ohne Änderungen
-            }
-        });
-
-        // Sichtbar machen des Dialogs
-        setLocationRelativeTo(parentFrame);  // Dialog in der Mitte des Elternfensters platzieren
-        setVisible(true);  // Dialog sichtbar machen
+            dispose();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Fehler beim Aktualisieren des Patienten. Bitte überprüfen Sie die Eingaben.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

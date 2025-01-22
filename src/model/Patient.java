@@ -8,14 +8,14 @@ public class Patient {
     private String vorname;
     private String nachname;
     private LocalDate gebdatum;
-    private int siteid;
+    private int station;
 
-    public Patient(int SVN, String vorname, String nachname, LocalDate gebdatum, int siteid) {
+    public Patient(int SVN, String vorname, String nachname, LocalDate gebdatum, int station) {
         this.SVN = SVN;
         this.vorname = vorname;
         this.nachname = nachname;
         this.gebdatum = gebdatum;
-        this.siteid = siteid;
+        this.station = station;
     }
 
     public int getSVN() {
@@ -50,23 +50,14 @@ public class Patient {
         this.gebdatum = gebdatum;
     }
 
-    public int getSiteid() {
-        return siteid;
+    public int getStation() {
+        return station;
     }
 
-    public void setSiteid(int siteid) {
-        this.siteid = siteid;
+    public void setStation(int station) {
+        this.station = station;
     }
 
-    @Override
-    public String toString() {
-        return "Patient{" +
-                "SVN='" + SVN + '\'' +
-                ", Vorname='" + vorname + '\'' +
-                ", Nachname='" + nachname + '\'' +
-                ", Geburtsdatum='" + gebdatum + '\'' +
-                ", SiteID='" + siteid + '\'' +
-                '}';
-    }
+
 }
 
