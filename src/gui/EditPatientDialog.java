@@ -59,28 +59,59 @@ public class EditPatientDialog extends JDialog {
 
         saveButton.addActionListener(e -> handleSave());
         cancelButton.addActionListener(e -> dispose());
+
+
     }
 
     private void handleSave() {
+        if (validateInput()) {
         try {
-            int svn = Integer.parseInt(svnField.getText());
-            String vorname = vornameField.getText();
-            String nachname = nachnameField.getText();
-            LocalDate geburtsdatum = LocalDate.parse(geburtsdatumField.getText());
-            int station = Integer.parseInt(stationField.getText());
 
-            Patient updatedPatient = new Patient(svn, vorname, nachname, geburtsdatum, station);
-            PatientDatabase.updatePatient(updatedPatient);
+                int svn = Integer.parseInt(svnField.getText());
+                String vorname = vornameField.getText();
+                String nachname = nachnameField.getText();
+                LocalDate geburtsdatum = LocalDate.parse(geburtsdatumField.getText());
+                int station = Integer.parseInt(stationField.getText());
 
-            model.setValueAt(svn, rowIndex, 0);
-            model.setValueAt(vorname, rowIndex, 1);
-            model.setValueAt(nachname, rowIndex, 2);
-            model.setValueAt(geburtsdatum, rowIndex, 3);
-            model.setValueAt(station, rowIndex, 4);
+                Patient updatedPatient = new Patient(svn, vorname, nachname, geburtsdatum, station);
+                PatientDatabase.updatePatient(updatedPatient);
 
-            dispose();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Fehler beim Aktualisieren des Patienten. Bitte überprüfen Sie die Eingaben.", "Fehler", JOptionPane.ERROR_MESSAGE);
+                model.setValueAt(svn, rowIndex, 0);
+                model.setValueAt(vorname, rowIndex, 1);
+                model.setValueAt(nachname, rowIndex, 2);
+                model.setValueAt(geburtsdatum, rowIndex, 3);
+                model.setValueAt(station, rowIndex, 4);
+
+                dispose();
+            } catch(Exception ex){
+                JOptionPane.showMessageDialog(this, "Fehler beim Aktualisieren des Patienten. Bitte überprüfen Sie die Eingaben.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            }
         }
+    }
+    private boolean validateInput() {
+        String svn = svnField.getText().trim();
+        String stationText = stationField.getText().trim();
+
+        boolean isSVNValid = svn.length() == 4 && svn.matches("\\d+");
+        boolean isStationValid;
+
+        try {
+            int station = Integer.parseInt(stationText);
+            isStationValid = station >= 1 && station <= 4;
+        } catch (NumberFormatException e) {
+            isStationValid = false;
+        }
+
+        if (!isSVNValid) {
+            JOptionPane.showMessageDialog(this, "Die SVN muss genau 4 Stellen haben und nur Zahlen enthalten.", "Ungültige Eingabe", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (!isStationValid) {
+            JOptionPane.showMessageDialog(this, "Die Station muss zwischen 1 und 4 sein :(.", "Ungültige Eingabe", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
     }
 }

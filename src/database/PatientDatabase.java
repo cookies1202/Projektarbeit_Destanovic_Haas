@@ -9,7 +9,6 @@ public class PatientDatabase {
 
     public static void addPatient(Patient patient) {
         String insertSQL = "INSERT INTO patient (SVN, vorname, nachname, gebdatum, station) VALUES (?, ?, ?, ?, ?)";
-
         try (Connection connection = DBAccess.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(insertSQL)) {
 

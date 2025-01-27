@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
-
+import service.AccountManager;
 import static gui.PatientenGUI.createAndShowGUI;
 
 public class LoginGUI {
@@ -47,11 +47,16 @@ public class LoginGUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Holen des Benutzernamens und Passworts
-                String username = userTextField.getText();
-                char[] password = passwordField.getPassword();
+//                loginButton.addActionListener((ActionEvent e) -> {
+
+                    String username = userTextField.getText();
+                    String password = String.valueOf(passwordField.getPassword());
+
+                AccountManager accountManager = AccountManager.getInstance();
+
 
                 // Einfacher Login-Check (nur ein Beispiel)
-                if (username.equals("a") && String.valueOf(password).equals("a")) {
+                if (accountManager.login(username, password)) {
                     // Erfolgsanzeige im eigenen Panel mit Bild
                     JPanel successPanel = new JPanel();
                     successPanel.setLayout(new BorderLayout());

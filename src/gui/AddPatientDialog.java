@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 
+
+
 public class AddPatientDialog extends JDialog {
 
     private JTextField svnField;
@@ -17,6 +19,7 @@ public class AddPatientDialog extends JDialog {
     private JTextField nachnameField;
     private JTextField geburtsdatumField;
     private JTextField stationField;
+
 
     public AddPatientDialog(JFrame parentFrame, DefaultTableModel model) {
         super(parentFrame, "Neuen Patienten hinzufügen", true);
