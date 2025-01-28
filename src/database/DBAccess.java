@@ -1,10 +1,12 @@
 package database;
 
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 public class DBAccess {
 
+private static Connection connection;
 
     private static final String URL = "jdbc:mysql://Localhost:3306/Projekt Ahmed_Manuel";
     private static final String USER = "root";
@@ -13,7 +15,7 @@ public class DBAccess {
     public static Connection connect() {
 
 
-            Connection connection = null;
+             connection = null;
             try {
                 connection = DriverManager.getConnection(URL, USER, PASSWORD);
             } catch (SQLException e) {
@@ -33,7 +35,18 @@ public class DBAccess {
             return connection;
         }
 
+    public  static void closeConnection() {
+        if (connection != null) {
+            try {
+                connection.close();
+                connection = null; // Verbindung auf null setzen, um Neuverbindung zu ermöglichen
+                JOptionPane.showMessageDialog(null, "Datenbankverbindung wurde getrennt", "Verbindung getrennt", JOptionPane.INFORMATION_MESSAGE);
 
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Fehler beim Schließen der Verbindung: " + e.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
     }
 
 

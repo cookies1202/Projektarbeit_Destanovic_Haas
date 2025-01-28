@@ -1,118 +1,137 @@
 package gui;
 
+import database.DBAccess;
 import database.PatientFetcher;
 import model.Patient;
-import gui.EditPatientDialog;
+import service.AccountManager;
+
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
-import service.AccountManager;
+
 import static gui.PatientenGUI.createAndShowGUI;
 
 public class LoginGUI {
 
     public static void main(String[] args) {
-        // GUI im Event-Dispatch-Thread starten
         SwingUtilities.invokeLater(() -> new LoginGUI().createLoginForm());
-
     }
 
-    public void createLoginForm() {
-        // Erstellen des JFrame (Hauptfenster)
+    public static void createLoginForm() {
+        // Erstellen des Hauptfensters
         JFrame frame = new JFrame("Login");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 200);
-        frame.setLocationRelativeTo(null);  // Fenster wird in der Mitte des Bildschirms angezeigt
 
-        // Erstellen eines Panels, um das Layout zu gestalten
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(3, 2, 10, 10));
+        frame.setSize(400, 250);
+        frame.setLocationRelativeTo(null); // Fenster zentrieren
 
-        // Erstellen der Eingabefelder und Labels
+        // Hauptpanel mit Padding
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout(10, 10));
+        mainPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
+
+        // Titel
+        JLabel titleLabel = new JLabel("Willkommen! Bitte einloggen:");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
+
+        // Formularpanel
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new GridLayout(2, 2, 10, 10));
+
         JLabel userLabel = new JLabel("Benutzername:");
         JTextField userTextField = new JTextField(20);
 
         JLabel passwordLabel = new JLabel("Passwort:");
         JPasswordField passwordField = new JPasswordField(20);
 
-        // Login-Button
+        formPanel.add(userLabel);
+        formPanel.add(userTextField);
+        formPanel.add(passwordLabel);
+        formPanel.add(passwordField);
+
+        mainPanel.add(formPanel, BorderLayout.CENTER);
+
+        // Buttonpanel
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+
         JButton loginButton = new JButton("Login");
+        loginButton.setPreferredSize(new Dimension(100, 30));
+        loginButton.setToolTipText("Klicken Sie hier, um sich anzumelden.");
 
-        // Button ActionListener für den Login-Button
-        loginButton.addActionListener(new ActionListener() {
+        buttonPanel.add(loginButton);
+
+        JButton abbrechenButton = new JButton("Abbrechen");
+        abbrechenButton.setPreferredSize(new Dimension(100, 30));
+        abbrechenButton.setToolTipText("Klicken Sie hier, um abzubrechen");
+
+        buttonPanel.add(abbrechenButton);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        // Login-Logik
+        loginButton.addActionListener(e -> {
+            String username = userTextField.getText();
+            String password = new String(passwordField.getPassword());
+
+            AccountManager accountManager = AccountManager.getInstance();
+
+            if (accountManager.login(username, password)) {
+                ImageIcon successIcon = new ImageIcon("/Users/haas.manuel/Desktop/Gesundheits Informatik/Software/Erfolgreiche_Anmeldung.png");
+                JOptionPane.showMessageDialog(frame, new JLabel(new ImageIcon(successIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH))),
+                        "Login erfolgreich!", JOptionPane.PLAIN_MESSAGE);
+
+                List<Patient> patients = PatientFetcher.fetchPatients();
+                SwingUtilities.invokeLater(() -> createAndShowGUI(patients));
+                frame.dispose();
+            } else {
+                JOptionPane.showMessageDialog(frame, "Ungültiger Benutzername oder Passwort!", "Fehler", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        abbrechenButton.addActionListener(e -> System.exit(0));
+
+        // Enter-Key für Login aktivieren
+        KeyAdapter enterKeyListener = new KeyAdapter() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                // Holen des Benutzernamens und Passworts
-//                loginButton.addActionListener((ActionEvent e) -> {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    loginButton.doClick();
+                }
+            }
+        };
+        userTextField.addKeyListener(enterKeyListener);
+        passwordField.addKeyListener(enterKeyListener);
 
-                    String username = userTextField.getText();
-                    String password = String.valueOf(passwordField.getPassword());
+        // Fenster-Schließen-Logik hinzufügen
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Fenster nicht automatisch schließen
 
-                AccountManager accountManager = AccountManager.getInstance();
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int confirm = JOptionPane.showConfirmDialog(
+                        frame,
+                        "Möchten Sie das Programm wirklich beenden?",
+                        "Programm beenden",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE
+                );
 
-
-                // Einfacher Login-Check (nur ein Beispiel)
-                if (accountManager.login(username, password)) {
-                    // Erfolgsanzeige im eigenen Panel mit Bild
-                    JPanel successPanel = new JPanel();
-                    successPanel.setLayout(new BorderLayout());
-
-
-
-                    // Laden des Bildes
-                    ImageIcon erfolgreicheAnmeldung = new ImageIcon("/Users/haas.manuel/Desktop/Gesundheits Informatik/Software/Erfolgreiche_Anmeldung.png"); // Bild einfügen
-                    JLabel imageLabel = new JLabel(erfolgreicheAnmeldung);
-                    successPanel.add(imageLabel, BorderLayout.CENTER);
-
-                    // Textnachricht hinzufügen
-                    JLabel successMessage = new JLabel("Login erfolgreich!");
-                    successMessage.setHorizontalAlignment(SwingConstants.CENTER);  // Nachricht zentrieren
-                    successMessage.setForeground(Color.BLACK);  // Schriftfarbe auf Schwarz setzen
-                    successPanel.add(successMessage, BorderLayout.SOUTH);
-
-                    // Erstelle und zeige das Panel im Fenster
-                    JOptionPane.showMessageDialog(frame, successPanel, "Erfolgreich angemeldet", JOptionPane.PLAIN_MESSAGE);
-
-                    // Nach erfolgreichem Login die Patientenliste anzeigen
-                    List<Patient> patients = PatientFetcher.fetchPatients();
-                    SwingUtilities.invokeLater(() -> createAndShowGUI(patients));
-                    frame.dispose(); // Schließt das Login-Fenster nach erfolgreichem Login
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Ungültiger Benutzername oder Passwort!");
+                if (confirm == JOptionPane.YES_OPTION) {
+                    // Datenbankverbindung schließen
+                    DBAccess.closeConnection();
+                    System.exit(0);
                 }
             }
         });
 
-        // Hinzufügen der Komponenten zum Panel
-        panel.add(userLabel);
-        panel.add(userTextField);
-        panel.add(passwordLabel);
-        panel.add(passwordField);
-        panel.add(new JLabel());  // Leer für Layout
-        panel.add(loginButton);
-
-        // **KeyListener für die Eingabefelder**
-        KeyAdapter keyAdapter = new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    loginButton.doClick();  // Simuliert den Klick auf den Login-Button
-                }
-            }
-        };
-
-        // Den KeyListener sowohl für das Benutzername- als auch das Passwortfeld hinzufügen
-        userTextField.addKeyListener(keyAdapter);
-        passwordField.addKeyListener(keyAdapter);
-
-        // Panel zum Frame hinzufügen
-        frame.add(panel);
-
-        // Sichtbarkeit des Fensters setzen
+        // Hinzufügen des Panels und Fenster sichtbar machen
+        frame.add(mainPanel);
         frame.setVisible(true);
     }
 }
