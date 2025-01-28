@@ -25,7 +25,7 @@ public class LoginGUI {
     public static void createLoginForm() {
         // Erstellen des Hauptfensters
         JFrame frame = new JFrame("Login");
-
+//ich ach hier was neues
         frame.setSize(400, 250);
         frame.setLocationRelativeTo(null); // Fenster zentrieren
 
