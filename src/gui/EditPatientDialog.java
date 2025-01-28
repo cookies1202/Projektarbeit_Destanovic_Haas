@@ -170,4 +170,4 @@ public class EditPatientDialog extends JDialog {
 
         return true;
     }
-}//
+}

@@ -82,7 +82,7 @@ public class LoginGUI {
             AccountManager accountManager = AccountManager.getInstance();
 
             if (accountManager.login(username, password)) {
-                ImageIcon successIcon = new ImageIcon("/Users/haas.manuel/Desktop/Gesundheits Informatik/Software/Erfolgreiche_Anmeldung.png");
+                ImageIcon successIcon = new ImageIcon("src/lib/Erfolgreiche_Anmeldung.png");
                 JOptionPane.showMessageDialog(frame, new JLabel(new ImageIcon(successIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH))),
                         "Login erfolgreich!", JOptionPane.PLAIN_MESSAGE);
 
@@ -121,7 +121,7 @@ public class LoginGUI {
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE
                 );
-//d
+//ddas
                 if (confirm == JOptionPane.YES_OPTION) {
                     // Datenbankverbindung schließen
                     DBAccess.closeConnection();
