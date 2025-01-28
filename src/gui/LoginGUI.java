@@ -121,7 +121,7 @@ public class LoginGUI {
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE
                 );
-
+//nnn
                 if (confirm == JOptionPane.YES_OPTION) {
                     // Datenbankverbindung schließen
                     DBAccess.closeConnection();
