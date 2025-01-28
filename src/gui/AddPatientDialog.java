@@ -42,6 +42,7 @@ public class AddPatientDialog extends JDialog {
 
         // Felder initialisieren
         svnField = new JTextField();
+        svnField.setToolTipText("Geben Sie eine 4-stellige SVN ein!");
         vornameField = new JTextField();
         nachnameField = new JTextField();
         gebdatumPicker = new JDateChooser();
