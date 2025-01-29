@@ -1,37 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `Projekt Ahmed_Manuel` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE `Projekt Ahmed_Manuel` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `Projekt Ahmed_Manuel`;
--- MySQL dump 10.13  Distrib 8.0.40, for macos14 (x86_64)
---
--- Host: 127.0.0.1    Database: Projekt Ahmed_Manuel
--- ------------------------------------------------------
--- Server version	9.1.0
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Dumping events for database 'Projekt Ahmed_Manuel'
---
-
---
--- Dumping routines for database 'Projekt Ahmed_Manuel'
---
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2025-01-17 14:06:44
+CREATE TABLE `station` (  `station` int NOT NULL AUTO_INCREMENT,  `stationname` varchar(45) NOT NULL,  PRIMARY KEY (`station`)) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;CREATE TABLE `patient` (  `SVN` int NOT NULL,  `vorname` varchar(45) NOT NULL,  `nachname` varchar(45) NOT NULL,  `gebdatum` date NOT NULL,  `station` int DEFAULT NULL,  PRIMARY KEY (`SVN`),  KEY `patient_side_id_idx` (`station`),  CONSTRAINT `patient_side_id` FOREIGN KEY (`station`) REFERENCES `station` (`station`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;CREATE TABLE `Befunde` (  `BefundID` int NOT NULL AUTO_INCREMENT,  `SVN` int DEFAULT NULL,  `BefundBlob` longblob,  `BefundDatum` date DEFAULT NULL,  PRIMARY KEY (`BefundID`),  KEY `befunde_ibfk_1` (`SVN`),  CONSTRAINT `befunde_ibfk_1` FOREIGN KEY (`SVN`) REFERENCES `patient` (`SVN`)) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;INSERT INTO `Projekt Ahmed_Manuel`.`station`(`station`,`stationname`)VALUES(1, 'Teststation');INSERT INTO `Projekt Ahmed_Manuel`.`patient`(`SVN`,`vorname`,`nachname`,`gebdatum`,`station`)VALUES(1,'Manuel','Haas',NOW(),1);
